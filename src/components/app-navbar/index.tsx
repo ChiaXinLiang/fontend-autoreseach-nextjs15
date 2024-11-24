@@ -20,14 +20,15 @@ import {
   IconSearch,
   IconUser,
 } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
+
+import { useAuth } from "@/hooks/use-auth";
 
 import AuthButton from "./auth-button";
 import { ThemeSwitcher } from "./theme-switcher";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { status } = useSession();
+  const { user } = useAuth();
 
   const menuItems = [
     {
@@ -50,7 +51,7 @@ export default function AppNavbar() {
     },
   ];
 
-  if (status === "authenticated") {
+  if (user) {
     menuItems.push(
       {
         label: "Profile",

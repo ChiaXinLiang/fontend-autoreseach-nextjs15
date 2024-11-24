@@ -1,14 +1,24 @@
-import { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
 
-import config from "@/../drizzle.config";
-import { env } from "@/env/server";
+const DATABASE_URL =
+  "postgresql://nextstarter:supersecret@localhost:5432/nextstarter";
 
-import db, { client } from "./index";
+// Create a separate client for migration to avoid conflicts
+const migrationClient = postgres(DATABASE_URL, { ssl: false });
 
-if (!env.DB_MIGRATING) {
-  throw new Error("You must set DB_MIGRATING to true.");
+// Add hashed_password column if it doesn't exist
+async function migrate() {
+  try {
+    await migrationClient.unsafe(`
+      ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "hashed_password" text;
+    `);
+    console.log("Migration completed successfully");
+  } catch (error) {
+    console.error("Migration failed:", error);
+    throw error;
+  } finally {
+    await migrationClient.end();
+  }
 }
 
-await migrate(db, { migrationsFolder: config.out! });
-
-await client.end();
+migrate().catch(console.error);

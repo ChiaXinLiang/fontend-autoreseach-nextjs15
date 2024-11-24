@@ -2,9 +2,9 @@ import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
-import users from "./users";
+import { users } from "./users";
 
-const guestbookEntries = pgTable("guestbook_entries", {
+export const guestbookEntries = pgTable("guestbook_entries", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("userId")
     .notNull()
@@ -29,5 +29,3 @@ export const InsertGuestbookEntrySchema = createInsertSchema(
   userId: true,
   createdAt: true,
 });
-
-export default guestbookEntries;

@@ -1,7 +1,14 @@
-export { default as accounts } from "./accounts";
-export {
-  default as guestbookEntries,
-  guestbookEntriesRelations,
-} from "./guestbook-entries";
-export { default as sessions } from "./sessions";
-export { default as users } from "./users";
+// Export schema types
+export { accounts } from "./accounts";
+export { guestbookEntries } from "./guestbook-entries";
+export { sessions } from "./sessions";
+export { userContent } from "./user-content";
+export { users } from "./users";
+
+// Export auth types
+export type { Session } from "next-auth";
+
+// Export schema types
+export type { GuestbookEntry } from "./guestbook-entries";
+export type { UserContent } from "./user-content";
+export type { NewUser, User } from "./users";

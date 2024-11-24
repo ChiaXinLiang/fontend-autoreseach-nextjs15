@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1726145669805,
-      "tag": "0000_furry_loa",
+      "when": 1732386810828,
+      "tag": "0000_cold_sheva_callister",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732388171118,
+      "tag": "0001_gigantic_meltdown",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732388242167,
+      "tag": "0002_lethal_stick",
       "breakpoints": true
     }
   ]

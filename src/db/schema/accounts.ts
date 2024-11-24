@@ -1,15 +1,15 @@
 import { integer, pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
-import users from "./users";
+import { users } from "./users";
 
-const accounts = pgTable(
+export const accounts = pgTable(
   "account",
   {
     userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccount>().notNull(),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
     refresh_token: text("refresh_token"),
@@ -26,5 +26,3 @@ const accounts = pgTable(
     }),
   })
 );
-
-export default accounts;

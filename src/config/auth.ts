@@ -1,27 +1,40 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import db from "@/db";
-import { env } from "@/env/server";
-
-const options: NextAuthOptions = {
+export const authConfig = {
   pages: {
-    signIn: "/",
+    signIn: "/auth/signin" as const,
+    signUp: "/auth/signup" as const,
   },
-  adapter: DrizzleAdapter(db),
-  callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id;
-      return session;
-    },
+  secret: process.env.JWT_SECRET || "your-secret-key",
+  cookieName: "session",
+  cookieMaxAge: 60 * 60 * 24, // 1 day
+  cookieOptions: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  } as Partial<ResponseCookie>,
+  jwt: {
+    expiresIn: "1d",
+    algorithm: "HS256" as const,
   },
-  providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-};
+  publicPaths: [
+    "/auth/signin",
+    "/auth/signup",
+    "/_next",
+    "/api/auth",
+    "/static",
+    "/favicon.ico",
+    "/public",
+  ] as const,
+  // API routes that don't require authentication
+  publicApiRoutes: ["/api/auth"] as const,
+} as const;
 
-export default options;
+// Type-safe config
+export type AuthConfig = typeof authConfig;
+
+// Helper types
+export type AuthPages = typeof authConfig.pages;
+export type PublicPaths = (typeof authConfig.publicPaths)[number];
+export type PublicApiRoutes = (typeof authConfig.publicApiRoutes)[number];

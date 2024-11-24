@@ -24,7 +24,7 @@ export default function FinalConfirmationPage() {
               (subsection) =>
                 `### ${subsection}\nDescription: ${subsection} details and analysis.`
             )
-            .join("")}`
+            .join("\n")}`
       )
       .join("\n\n")}`;
   }

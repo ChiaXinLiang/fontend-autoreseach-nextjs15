@@ -1,7 +1,17 @@
-import NextAuth from "next-auth";
+// This route is no longer needed as we're using our own auth implementation
+import { NextResponse } from "next/server";
 
-import options from "@/config/auth";
+export async function GET() {
+  return NextResponse.json({ status: "ok" });
+}
 
-const handler = NextAuth(options);
+export async function POST() {
+  return NextResponse.json({ status: "ok" });
+}
 
-export { handler as GET, handler as POST };
+export async function HEAD() {
+  return NextResponse.json({ status: "ok" });
+}
+
+// Remove the route handler file entirely
+export const dynamic = "force-dynamic";
