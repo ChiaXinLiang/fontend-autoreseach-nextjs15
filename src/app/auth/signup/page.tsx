@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -16,16 +17,16 @@ import { authConfig } from "@/config/auth";
 import { registerUser } from "@/lib/actions/auth";
 import { auth } from "@/lib/auth";
 
-interface Props {
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description: "Create a new account",
+};
 
-export default async function SignUpPage({ searchParams }: Props) {
+export default async function SignUpPage() {
   const session = await auth();
-  const callbackUrl = searchParams?.callbackUrl?.toString() || "/";
 
   if (session) {
-    redirect(callbackUrl);
+    redirect("/");
   }
 
   return (
@@ -37,7 +38,6 @@ export default async function SignUpPage({ searchParams }: Props) {
         </CardHeader>
         <CardContent>
           <form action={registerUser} className="space-y-4">
-            <input type="hidden" name="callbackUrl" value={callbackUrl} />
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -81,10 +81,7 @@ export default async function SignUpPage({ searchParams }: Props) {
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href={{
-                pathname: authConfig.pages.signIn,
-                query: callbackUrl !== "/" ? { callbackUrl } : undefined,
-              }}
+              href={authConfig.pages.signIn}
               className="text-primary underline-offset-4 hover:underline"
             >
               Sign in

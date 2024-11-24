@@ -1,11 +1,18 @@
 import { useSearchParams } from "next/navigation";
 
 const SearchPaper = () => {
-  const { query } = useSearchParams();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
 
-  const searchQuery = query.get("query");
-
-  return <div>SearchPaper</div>;
+  return (
+    <div>
+      {query ? (
+        <div>Searching for: {query}</div>
+      ) : (
+        <div>No search query provided</div>
+      )}
+    </div>
+  );
 };
 
 export default SearchPaper;

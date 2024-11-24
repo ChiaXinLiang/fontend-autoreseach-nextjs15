@@ -4,9 +4,8 @@
   "rules": {
     "prefer-arrow-callback": ["error"],
     "prefer-template": ["error"],
-    // "semi": ["error"],
-    // "quotes": ["error", "double"],
-    "n/no-process-env": ["error"],
+    // Disable process.env rule since we need it for Next.js environment variables
+    "n/no-process-env": "off",
     "check-file/filename-naming-convention": [
       "error",
       {

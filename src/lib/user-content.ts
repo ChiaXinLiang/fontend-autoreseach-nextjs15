@@ -1,6 +1,6 @@
 "use server";
 
-import { ilike } from "drizzle-orm";
+import { and, ilike } from "drizzle-orm";
 
 import { db } from "@/db";
 import { userContent } from "@/db/schema";
@@ -54,16 +54,17 @@ export const listUserContent = async (
   userId: string,
   contentType?: ContentType
 ) => {
-  const query = db
-    .select()
-    .from(userContent)
-    .where(ilike(userContent.userId, userId));
+  const conditions = [ilike(userContent.userId, userId)];
 
   if (contentType) {
-    query.where(ilike(userContent.contentType, contentType));
+    conditions.push(ilike(userContent.contentType, contentType));
   }
 
-  return await query.orderBy(userContent.updatedAt);
+  return await db
+    .select()
+    .from(userContent)
+    .where(and(...conditions))
+    .orderBy(userContent.updatedAt);
 };
 
 export const deleteUserContent = async (
@@ -100,9 +101,13 @@ export const updateContentMetadata = async (
       ...metadata,
       updatedAt: new Date(),
     })
-    .where(ilike(userContent.userId, userId))
-    .where(ilike(userContent.contentType, contentType))
-    .where(ilike(userContent.filename, filename));
+    .where(
+      and(
+        ilike(userContent.userId, userId),
+        ilike(userContent.contentType, contentType),
+        ilike(userContent.filename, filename)
+      )
+    );
 };
 
 const generateKey = (
@@ -149,9 +154,13 @@ const getContentMetadata = async (
   return await db
     .select()
     .from(userContent)
-    .where(ilike(userContent.userId, userId))
-    .where(ilike(userContent.contentType, contentType))
-    .where(ilike(userContent.filename, filename))
+    .where(
+      and(
+        ilike(userContent.userId, userId),
+        ilike(userContent.contentType, contentType),
+        ilike(userContent.filename, filename)
+      )
+    )
     .limit(1)
     .then((results) => results[0]);
 };
@@ -163,7 +172,11 @@ const deleteContentMetadata = async (
 ) => {
   await db
     .delete(userContent)
-    .where(ilike(userContent.userId, userId))
-    .where(ilike(userContent.contentType, contentType))
-    .where(ilike(userContent.filename, filename));
+    .where(
+      and(
+        ilike(userContent.userId, userId),
+        ilike(userContent.contentType, contentType),
+        ilike(userContent.filename, filename)
+      )
+    );
 };

@@ -13,7 +13,6 @@ import {
   NavbarMenuToggle,
 } from "@nextui-org/react";
 import {
-  IconBook,
   IconFileText,
   IconPackage,
   IconPencil,
@@ -52,20 +51,12 @@ export default function AppNavbar() {
   ];
 
   if (user) {
-    menuItems.push(
-      {
-        label: "Profile",
-        shortLabel: "Profile",
-        href: "/profile",
-        icon: <IconUser className="h-5 w-5" />,
-      },
-      {
-        label: "Guestbook",
-        shortLabel: "Guest",
-        href: "/guestbook",
-        icon: <IconBook className="h-5 w-5" />,
-      }
-    );
+    menuItems.push({
+      label: "Profile",
+      shortLabel: "Profile",
+      href: "/profile",
+      icon: <IconUser className="h-5 w-5" />,
+    });
   }
 
   return (

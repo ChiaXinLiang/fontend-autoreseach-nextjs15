@@ -1,6 +1,4 @@
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+import { auth } from "../auth";
 import {
   type ContentMetadata,
   type ContentType,
@@ -10,7 +8,7 @@ import {
   listUserContent,
   saveUserContent,
   updateContentMetadata,
-} from "@/lib/user-content";
+} from "../user-content";
 
 export async function saveContent(
   contentType: ContentType,
@@ -18,12 +16,12 @@ export async function saveContent(
   metadata?: ContentMetadata,
   filename?: string
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await saveUserContent(
     userId,
     contentType,
@@ -34,22 +32,22 @@ export async function saveContent(
 }
 
 export async function getContent(contentType: ContentType, filename: string) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await getUserContent(userId, contentType, filename);
 }
 
 export async function listContent(contentType?: ContentType) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await listUserContent(userId, contentType);
 }
 
@@ -57,12 +55,12 @@ export async function deleteContent(
   contentType: ContentType,
   filename: string
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await deleteUserContent(userId, contentType, filename);
 }
 
@@ -70,12 +68,12 @@ export async function getContentDownloadUrl(
   contentType: ContentType,
   filename: string
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await getDownloadUrl(userId, contentType, filename);
 }
 
@@ -84,11 +82,11 @@ export async function updateContent(
   filename: string,
   metadata: Partial<ContentMetadata>
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const user = await auth();
+  if (!user?.email) {
     throw new Error("Authentication required");
   }
 
-  const userId = session.user.email;
+  const userId = user.email;
   return await updateContentMetadata(userId, contentType, filename, metadata);
 }

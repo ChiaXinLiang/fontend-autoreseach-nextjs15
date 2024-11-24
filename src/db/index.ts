@@ -12,7 +12,6 @@ export async function query() {
     users: db.query.users,
     accounts: db.query.accounts,
     sessions: db.query.sessions,
-    guestbookEntries: db.query.guestbookEntries,
     userContent: db.query.userContent,
   };
 }

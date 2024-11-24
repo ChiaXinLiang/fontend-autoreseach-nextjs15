@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type User = {
@@ -15,7 +14,6 @@ type User = {
 export function useAuth() {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     async function checkAuth() {
