@@ -1,4 +1,4 @@
--- Create users table first
+-- Create users table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "users" (
   "id" text PRIMARY KEY NOT NULL,
   "name" text,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "users" (
   CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 
--- Create account table
+-- Create account table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "account" (
   "user_id" text NOT NULL,
   "type" text NOT NULL,
@@ -22,19 +22,41 @@ CREATE TABLE IF NOT EXISTS "account" (
   "scope" text,
   "id_token" text,
   "session_state" text,
-  CONSTRAINT "account_provider_provider_account_id_pk" PRIMARY KEY("provider", "provider_account_id"),
-  CONSTRAINT "account_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE
+  CONSTRAINT "account_provider_provider_account_id_pk" PRIMARY KEY("provider", "provider_account_id")
 );
 
--- Create session table
+-- Add foreign key constraint to account table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'account_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "account" ADD CONSTRAINT "account_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- Create session table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "session" (
   "session_token" text PRIMARY KEY NOT NULL,
   "user_id" text NOT NULL,
-  "expires" timestamp NOT NULL,
-  CONSTRAINT "session_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE
+  "expires" timestamp NOT NULL
 );
 
--- Create user_content table
+-- Add foreign key constraint to session table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'session_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "session" ADD CONSTRAINT "session_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- Create user_content table if it doesn't exist
 CREATE TABLE IF NOT EXISTS "user_content" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   "user_id" text NOT NULL,
@@ -46,6 +68,17 @@ CREATE TABLE IF NOT EXISTS "user_content" (
   "tags" text[],
   "metadata" jsonb,
   "created_at" timestamp DEFAULT now() NOT NULL,
-  "updated_at" timestamp DEFAULT now() NOT NULL,
-  CONSTRAINT "user_content_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id")
+  "updated_at" timestamp DEFAULT now() NOT NULL
 );
+
+-- Add foreign key constraint to user_content table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'user_content_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "user_content" ADD CONSTRAINT "user_content_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id");
+  END IF;
+END $$;

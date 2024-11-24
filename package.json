@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier src/ --write",
-    "db:migrate": "cross-env DB_MIGRATING=true drizzle-kit migrate"
+    "db:migrate": "cross-env DB_MIGRATING=true tsx src/db/migrate.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.6.1",

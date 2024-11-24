@@ -12,18 +12,52 @@ CREATE TABLE IF NOT EXISTS "users" (
   CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 
--- Update foreign key constraints
-ALTER TABLE IF EXISTS "account"
-  DROP CONSTRAINT IF EXISTS "account_user_id_user_id_fk",
-  ADD CONSTRAINT "account_user_id_users_id_fk"
-    FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+-- Update foreign key constraints if they exist
+DO $$
+BEGIN
+  -- Drop old constraints if they exist
+  IF EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'account_user_id_user_id_fk'
+  ) THEN
+    ALTER TABLE "account" DROP CONSTRAINT "account_user_id_user_id_fk";
+  END IF;
 
-ALTER TABLE IF EXISTS "session"
-  DROP CONSTRAINT IF EXISTS "session_user_id_user_id_fk",
-  ADD CONSTRAINT "session_user_id_users_id_fk"
-    FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'account_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "account" ADD CONSTRAINT "account_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
 
-ALTER TABLE IF EXISTS "user_content"
-  DROP CONSTRAINT IF EXISTS "user_content_user_id_user_id_fk",
-  ADD CONSTRAINT "user_content_user_id_users_id_fk"
-    FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'session_user_id_user_id_fk'
+  ) THEN
+    ALTER TABLE "session" DROP CONSTRAINT "session_user_id_user_id_fk";
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'session_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "session" ADD CONSTRAINT "session_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'user_content_user_id_user_id_fk'
+  ) THEN
+    ALTER TABLE "user_content" DROP CONSTRAINT "user_content_user_id_user_id_fk";
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'user_content_user_id_users_id_fk'
+  ) THEN
+    ALTER TABLE "user_content" ADD CONSTRAINT "user_content_user_id_users_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION;
+  END IF;
+END $$;
