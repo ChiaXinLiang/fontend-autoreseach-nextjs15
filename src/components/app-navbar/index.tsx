@@ -17,17 +17,14 @@ import {
   IconPackage,
   IconPencil,
   IconSearch,
-  IconUser,
 } from "@tabler/icons-react";
-
-import { useAuth } from "@/hooks/use-auth";
 
 import AuthButton from "./auth-button";
 import { ThemeSwitcher } from "./theme-switcher";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   const menuItems = [
     {
@@ -50,14 +47,14 @@ export default function AppNavbar() {
     },
   ];
 
-  if (user) {
-    menuItems.push({
-      label: "Profile",
-      shortLabel: "Profile",
-      href: "/profile",
-      icon: <IconUser className="h-5 w-5" />,
-    });
-  }
+  // if (user) {
+  //   menuItems.push({
+  //     label: "Profile",
+  //     shortLabel: "Profile",
+  //     href: "/profile",
+  //     icon: <IconUser className="h-5 w-5" />,
+  //   });
+  // }
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>

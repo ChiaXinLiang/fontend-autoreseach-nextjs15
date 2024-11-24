@@ -19,6 +19,7 @@ export const authConfig = {
     algorithm: "HS256" as const,
   },
   publicPaths: [
+    "/",
     "/auth/signin",
     "/auth/signup",
     "/_next",
