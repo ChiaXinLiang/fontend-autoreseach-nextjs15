@@ -1,17 +1,26 @@
+import { promises as fs } from "fs";
+import path from "path";
 import postgres from "postgres";
 
 const DATABASE_URL =
   "postgresql://nextstarter:supersecret@localhost:5432/nextstarter";
 
-// Create a separate client for migration to avoid conflicts
-const migrationClient = postgres(DATABASE_URL, { ssl: false });
-
-// Add hashed_password column if it doesn't exist
 async function migrate() {
+  const migrationClient = postgres(DATABASE_URL, { ssl: false });
+
   try {
-    await migrationClient.unsafe(`
-      ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "hashed_password" text;
-    `);
+    // Read and execute the migration file
+    const migrationPath = path.join(
+      process.cwd(),
+      "src",
+      "db",
+      "migrations",
+      "0005_create_tables.sql"
+    );
+    const sql = await fs.readFile(migrationPath, "utf-8");
+
+    console.log("Executing migration...");
+    await migrationClient.unsafe(sql);
     console.log("Migration completed successfully");
   } catch (error) {
     console.error("Migration failed:", error);
